@@ -30,19 +30,28 @@ function displayData(ep, si){
 		success:function(data){
 			function initMap() {
 
-				var map = new google.maps.Map(document.getElementById('map'), {zoom: 6, center: {lat: -42.027300, lng: 172.718029});
+				var map = new google.maps.Map(document.getElementById('map'), {lat: -42.027300, lng: 172.718029});
 
 							for (var i = 0; i < data.features.length; i++) {
 							 for (var a = 0; a < data.features[i].geometry.coordinates.length; a++) {
 
-								 // if (ep === 'features'){
-								 //   features(data, ep, si);
-								 // } else if (ep === 'coordinates'){
-								 //   coordinates(data, ep, si);
-								 // }
+								 if (ep === 'features'){
+								   features(data, ep, si);
+
+									 var marker = new google.maps.Marker({
+										position:{
+											lat: features[i].geometry[a].coordinates.lat,
+											lng: features[i].geometry[a].coordinates.lng
+										},
+										map: map,
+										animation: google.maps.Animation.DROP});
+
+								 } else if (ep === 'coordinates'){
+								   coordinates(data, ep, si);
+								 }
 								 	console.log(data);
 
-							 }
+							 };
 							}
 								google.maps.event.addDomListener(window, "load", initMap);
 			};
