@@ -1,74 +1,61 @@
-console.log('geonet');
+console.log('geonbnbmnbnmbet');
 
 $(document).ready(function(){
-
-
 	//accessing key from json file
 	var myKey = JSON.parse(apiKey);
-	// console.log(myKey[0]);
+	console.log(myKey[0]);
 	myKey = myKey[0].key;
-	// console.log(myKey);
-
-  var endPoint;
-  var size;
+	console.log(myKey);
 
 
-	//dynamically creating the script element and
-//giving src attribute the google plugin with key from external json file
-var script = document.createElement('script');
-script.src='https://maps.googleapis.com/maps/api/js?key='+ myKey[0].key + '&callback=initMap';
-document.getElementsByTagName('body')[0].appendChild(script); //appending to the body of index.html
-// var map;
-
-
-function displayData(ep, si){
-  // console.log(ep, si);
 	$.ajax({
 	  url : 'https://api.geonet.org.nz/intensity?type=reported',
 		type :'GET',
 		dataType :'json',
 		success:function(data){
-			function initMap() {
+			console.log(data);
+				var markers = [];
+				var i;
 
-				var map = new google.maps.Map(document.getElementById('map'), {lat: -42.027300, lng: 172.718029});
+					for (var i = 0; i < data.features.length; i++) {
+							var obj = {};
 
-							for (var i = 0; i < data.features.length; i++) {
-							 for (var a = 0; a < data.features[i].geometry.coordinates.length; a++) {
+						obj.lat = JSON.parse(data.features[i].geometry.coordinates[1]);
+						obj.lat = JSON.parse(data.features[i].geometry.coordinates[0]);
 
-								 if (ep === 'features'){
-								   features(data, ep, si);
+						markers.push(obj)
 
-									 var marker = new google.maps.Marker({
-										position:{
-											lat: features[i].geometry[a].coordinates.lat,
-											lng: features[i].geometry[a].coordinates.lng
-										},
-										map: map,
-										animation: google.maps.Animation.DROP});
-
-								 } else if (ep === 'coordinates'){
-								   coordinates(data, ep, si);
-								 }
-								 	console.log(data);
-
-							 };
-							}
-								google.maps.event.addDomListener(window, "load", initMap);
-			};
-
-
-		},
-
-    error:function(){
-		console.log('error');
+					}
+					console.log(markers);
+					initMap(markers);
+		}, error:function(){
+			console.log('error');
 		}
 
 	});//ajax
 
-};// end display function
+
+	var script = document.createElement('script');
+	script.src='https://maps.googleapis.com/maps/api/js?key='+ myKey ;
+	document.getElementsByTagName('body')[0].appendChild(script); //appending to the body of index.html
 
 }); //document ready
 
-// <script async defer
-// src="https://maps.googleapis.com/maps/api/js?key=" + myKey&callback=initMap">
-// </script>
+	function initMap(allMarkers) {
+		var marker = []
+		var wellington = {lat: -41.2865, lng: 174.7762};
+		var map =  new google.maps.Map(
+			document.getElementById('map'), {zoom: 10, center: wellington});
+
+		var a;
+		for (a =0; a<allMarkers.length; a++) {
+
+			var latLng = {lat:allMarkers[a].lat , lng:allMarkers[a].lng}
+
+			var marker = new google.maps.Marker({
+				position: latLng,
+				map: map
+			});
+
+		}
+	};
